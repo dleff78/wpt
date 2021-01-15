@@ -1,0 +1,9 @@
+<!DOCTYPE html>
+<html>
+<script>
+const workerScript = "// Do nothing.";
+const blob = new Blob([workerScript], { type: 'text/javascript' });
+const blobUrl = URL.createObjectURL(blob);
+const worker = new Worker(blobUrl);
+</script>
+</html>
