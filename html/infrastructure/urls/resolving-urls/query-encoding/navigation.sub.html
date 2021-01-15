@@ -81,9 +81,31 @@ function test_follow_link(tag) {
   }, 'follow hyperlink <'+tag+' href>');
 }
 
-'a, area, link'.split(', ').forEach(function(str) {
+'a, area'.split(', ').forEach(function(str) {
   test_follow_link(str);
 });
+
+async_test(function() {
+  const link = document.createElement('link');
+  const linkIframe = document.createElement('iframe');
+  setup_navigation(link, linkIframe, 'test_dont_follow_link', this);
+  linkIframe.onload = this.unreached_func();
+  link.click();
+
+  const anchor = document.createElement('a');
+  const anchorIframe = document.createElement('iframe');
+  setup_navigation(anchor, anchorIframe, 'test_dont_follow_link_anchor', this);
+
+  const anchor2 = document.createElement('a');
+  const anchorIframe2 = document.createElement('iframe');
+  setup_navigation(anchor2, anchorIframe2, 'test_dont_follow_link_anchor_2', this);
+
+  anchorIframe.onload = this.step_func(function() {
+    anchorIframe2.onload = this.step_func_done();
+    anchor2.click();
+  });
+  anchor.click();
+}, `don't follow hyperlink <link href>`);
 
 // follow hyperlink with ping attribute
 function test_follow_link_ping(tag) {
